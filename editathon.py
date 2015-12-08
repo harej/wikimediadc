@@ -92,22 +92,22 @@ def main():
             attributes = {
                             "fields": [
                                         {"field-id": 109850233,  # (list of) Articles Edited During Event
-                                         "values": ["value": "|".join(edited_articles_list[user])]
+                                         "values": [{"value": "|".join(edited_articles_list[user])}]
                                         },
                                         {"field-id": 109850237,  # (list of) Media Files Uploaded
-                                         "values": ["value": "|".join(uploaded_media[user])]
+                                         "values": [{"value": "|".join(uploaded_media[user])}]
                                         },
                                         {"field-id": 109850234,  # Number of Articles Edited
-                                         "values": ["value": len(edited_articles_list[user])]
+                                         "values": [{"value": len(edited_articles_list[user])}]
                                         },
                                         {"field-id": 109866023,  # Number of Edits Made
-                                         "values": ["value": number_of_edits[user]]
+                                         "values": [{"value": number_of_edits[user]}]
                                         },
                                         {"field-id": 109850235,  # Number of Bytes Changed
-                                         "values": ["value": absolute_bytes[user]]
+                                         "values": [{"value": absolute_bytes[user]}]
                                         },
                                         {"field-id": 109850236,  # Number of Media Files Uploaded
-                                         "values": ["value": len(uploaded_media[user])]
+                                         "values": [{"value": len(uploaded_media[user])}]
                                         }
                                       ]
                          }
