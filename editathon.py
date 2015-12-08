@@ -45,15 +45,15 @@ def main():
             # Get canonical username and event date/time range
             user_item = extant_items[109824325][0]['item_id']
             event_item = extant_items[109850232][0]['item_id']
-            username = None  # Initializing
+            user = None  # Initializing
             date_range = None
 
             for global_metric_field in global_metric_fields:
                 if global_metric_field not in extant_fields \
                 or len(extant_fields[global_metric_field]) == 0:
                     # Retrieving username and event date ranges from associated items
-                    if username == None:  # To avoid redundant queries
-                        username = c.transport.GET('item', user_item, \
+                    if user == None:  # To avoid redundant queries
+                        user = c.transport.GET('item', user_item, \
                                    'value', 109823938)[0]['value']
                         if date_range == None:
                             daterange = c.transport.GET('item', event_item, \
@@ -71,7 +71,7 @@ def main():
                          'cohort': []}
 
                     # Adding username to cohort list
-                    send_to_global_metrics[event_item]['cohort'].append((username, checkin_id))
+                    send_to_global_metrics[event_item]['cohort'].append((user, checkin_id))
                     
     for event_item, blob in send_to_globalmetrics.items():
         cohort = [x[0] for x in blob['cohort']]  # only the usernames
