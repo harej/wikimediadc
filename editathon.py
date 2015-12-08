@@ -1,0 +1,119 @@
+import arrow
+from pypodio2 import api
+from client_settings import *
+from globalmetrics import GlobalMetrics
+
+
+# App IDs:
+# Event Check-Ins: 14347171
+
+# Field IDs:
+# Metrics Consent: 109821228
+# Associated User Profile: 109824325
+# Associated Event Profile: 109850232
+# ~
+# (list of) Articles Edited During Event: 109850233
+# (list of) Media Files Uploaded: 109850237
+# Number of Articles Edited: 109850234
+# Number of Edits Made: 109866023
+# Number of Bytes Changed: 109850235
+# Number of Media Files Uploaded: 109850236
+
+
+def main():
+    # Get all the items
+    global_metric_fields = [109850233, 109850237, 109850234, 109866023, 109850235, 109850236]
+    c = api.OAuthClient(client_id,client_secret,username,password)
+    checkins = c.Application.get_items(14347171)['items']
+
+    send_to_globalmetrics = {}
+    
+    for item in checkins:
+        checkin_id = item['item_id']
+        # Create dictionary to simplify batshit Podio output
+        extant_fields = {field['field_id']: list(field['values'][0].values()) \
+                         for field in item['fields']}
+
+        # Can we analyze this entry?
+        condition1 = (extant_fields[109824325]['id'] == 1)  # Metrics consent check
+        condition2 = 109824325 in extant_fields \
+                     and len(extant_fields[109824325]) > 0  # Associated user
+        condition3 = 109850232 in extant_fields \
+                     and len(extant_fields[109850232]) > 0  # Assoicated event
+
+        if condition1 and condition2 and condition3:
+            # Get canonical username and event date/time range
+            user_item = extant_items[109824325][0]['item_id']
+            event_item = extant_items[109850232][0]['item_id']
+            username = None  # Initializing
+            date_range = None
+
+            for global_metric_field in global_metric_fields:
+                if global_metric_field not in extant_fields \
+                or len(extant_fields[global_metric_field]) == 0:
+                    # Retrieving username and event date ranges from associated items
+                    if username == None:  # To avoid redundant queries
+                        username = c.transport.GET('item', user_item, \
+                                   'value', 109823938)[0]['value']
+                        if date_range == None:
+                            daterange = c.transport.GET('item', event_item, \
+                                        'value', 103174438)[0]
+                            daterange = [daterange['start_utc'], daterange['end_utc']]
+                            daterange = [arrow.get(date, 'YYYY-MM-DD HH:mm:ss') \
+                                         for date in daterange]
+
+                    # Checking for event being indexed in the dictionary
+                    # Initializes it if not
+                    if event_item not in send_to_globalmetrics:
+                        send_to_globalmetrics[event_item] = \
+                        {'start_date': daterange[0], 'end_date': daterange[1], \
+                         'projects': ['enwiki'], \
+                         'cohort': []}
+
+                    # Adding username to cohort list
+                    send_to_global_metrics[event_item]['cohort'].append((username, checkin_id))
+                    
+    for event_item, blob in send_to_globalmetrics.items():
+        cohort = [x[0] for x in blob['cohort']]  # only the usernames
+        projects =  blob['projects']
+        start = blob['start_date']
+        end = blob['end_date']
+        
+        metrics = GlobalMetrics(cohort, projects, start, end)
+        newly_registered = metrics.newly_registered['enwiki']
+        uploaded_media = metrics.uploaded_media['commonswiki']
+        absolute_bytes = metrics.absolute_bytes['enwiki']
+        edited_articles_list = metrics.edited_articles_list['enwiki']
+        number_of_edits = metrics.number_of_edits['enwiki']
+        
+        assoc_checkin = {x[0]: x[1] for x in blob['cohort']}
+        
+        for user, checkin in assoc_checkins.items():
+            article_list_string = edited_articles_list[
+            attributes = {
+                            "fields": [
+                                        {"field-id": 109850233,  # (list of) Articles Edited During Event
+                                         "values": ["value": "|".join(edited_articles_list[user])]
+                                        },
+                                        {"field-id": 109850237,  # (list of) Media Files Uploaded
+                                         "values": ["value": "|".join(uploaded_media[user])]
+                                        },
+                                        {"field-id": 109850234,  # Number of Articles Edited
+                                         "values": ["value": len(edited_articles_list[user])]
+                                        },
+                                        {"field-id": 109866023,  # Number of Edits Made
+                                         "values": ["value": number_of_edits[user]]
+                                        },
+                                        {"field-id": 109850235,  # Number of Bytes Changed
+                                         "values": ["value": absolute_bytes[user]]
+                                        },
+                                        {"field-id": 109850236,  # Number of Media Files Uploaded
+                                         "values": ["value": len(uploaded_media[user])]
+                                        }
+                                      ]
+                         }
+ 
+
+            print(c.Item.update(checkin, attributes))
+            
+main()
