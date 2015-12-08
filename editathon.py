@@ -89,7 +89,6 @@ def main():
         assoc_checkin = {x[0]: x[1] for x in blob['cohort']}
         
         for user, checkin in assoc_checkins.items():
-            article_list_string = edited_articles_list[
             attributes = {
                             "fields": [
                                         {"field-id": 109850233,  # (list of) Articles Edited During Event
