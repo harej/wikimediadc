@@ -24,7 +24,7 @@ def main():
     # Get all the items
     global_metric_fields = [109850233, 109850237, 109850234, 109866023, 109850235, 109850236]
     c = api.OAuthClient(client_id,client_secret,username,password)
-    checkins = c.Application.get_items(14347171)['items']
+    checkins = c.Application.get_items(14347171, limit=500)['items']
 
     send_to_globalmetrics = {}
     
