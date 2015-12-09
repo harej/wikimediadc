@@ -43,8 +43,8 @@ def main():
 
         if condition1 and condition2 and condition3:
             # Get canonical username and event date/time range
-            user_item = extant_items[109824325][0]['item_id']
-            event_item = extant_items[109850232][0]['item_id']
+            user_item = extant_fields[109824325][0]['item_id']
+            event_item = extant_fields[109850232][0]['item_id']
             user = None  # Initializing
             date_range = None
 
