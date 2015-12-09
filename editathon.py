@@ -35,7 +35,7 @@ def main():
                          for field in item['fields']}
 
         # Can we analyze this entry?
-        condition1 = (extant_fields[109824325][0]['id'] == 1)  # Metrics consent check
+        condition1 = (extant_fields[109821228][0]['id'] == 1)  # Metrics consent check
         condition2 = 109824325 in extant_fields \
                      and len(extant_fields[109824325]) > 0  # Associated user
         condition3 = 109850232 in extant_fields \
