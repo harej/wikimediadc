@@ -71,7 +71,7 @@ def main():
                          'cohort': []}
 
                     # Adding username to cohort list
-                    send_to_global_metrics[event_item]['cohort'].append((user, checkin_id))
+                    send_to_globalmetrics[event_item]['cohort'].append((user, checkin_id))
                     
     for event_item, blob in send_to_globalmetrics.items():
         cohort = [x[0] for x in blob['cohort']]  # only the usernames
