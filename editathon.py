@@ -55,6 +55,7 @@ def main():
                     if user == None:  # To avoid redundant queries
                         user = c.transport.GET('item', user_item, \
                                    'value', 109823938)[0]['value']
+                        user = user.replace("_", " ")  # normalizing
                         if date_range == None:
                             daterange = c.transport.GET('item', event_item, \
                                         'value', 103174438)[0]
