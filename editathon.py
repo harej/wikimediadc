@@ -86,7 +86,7 @@ def main():
         edited_articles_list = metrics.edited_articles_list['enwiki']
         number_of_edits = metrics.number_of_edits['enwiki']
         
-        assoc_checkin = {x[0]: x[1] for x in blob['cohort']}
+        assoc_checkins = {x[0]: x[1] for x in blob['cohort']}
         
         for user, checkin in assoc_checkins.items():
             attributes = {
