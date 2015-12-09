@@ -91,12 +91,6 @@ def main():
         for user, checkin in assoc_checkins.items():
             attributes = {
                             "fields": [
-                                        {"field_id": 109850233,  # (list of) Articles Edited During Event
-                                         "values": [{"value": "|".join(edited_articles_list[user])}]
-                                        },
-                                        {"field_id": 109850237,  # (list of) Media Files Uploaded
-                                         "values": [{"value": "|".join(uploaded_media[user])}]
-                                        },
                                         {"field_id": 109850234,  # Number of Articles Edited
                                          "values": [{"value": len(edited_articles_list[user])}]
                                         },
@@ -112,6 +106,16 @@ def main():
                                       ]
                          }
  
+            if len(edited_articles_list[user]) > 0:
+                attributes["fields"].append({"field_id": 109850233,  # (list of) Articles Edited During Event
+                                             "values": [{"value": "|".join(edited_articles_list[user])}]
+                                            }
+                                           )
+            if len(uploaded_media[user]) > 0:
+                attributes["fields"].append({"field_id": 109850237,  # (list of) Media Files Uploaded
+                                             "values": [{"value": "|".join(uploaded_media[user])}]
+                                            }
+                                           )
 
             print(c.Item.update(checkin, attributes))
             
