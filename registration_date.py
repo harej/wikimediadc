@@ -24,8 +24,8 @@ def main():
             reg_date = arrow.get(reg_date, 'YYYYMMDDHHmmss')
             reg_date = reg_date.format('YYYY-MM-DD HH:mm:ss')
             
-            attributes = {'fields': ['field_id': 109850343,
-                                     'values': [{'start-utc': reg_date}]]}
+            attributes = {'fields': [{'field_id': 109850343,
+                                     'values': [{'start-utc': reg_date}]}]}
 
 
             id = item['item_id']
