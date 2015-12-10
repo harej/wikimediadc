@@ -25,8 +25,7 @@ def main():
             reg_date = reg_date.format('YYYY-MM-DD HH:mm:ss')
             
             attributes = {'fields': [{'field_id': 109850343,
-                                     'values': [{'start-utc': reg_date}]}]}
-
+                                     'values': [{'start_utc': reg_date}]}]}
 
             id = item['item_id']
 
