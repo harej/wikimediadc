@@ -20,9 +20,14 @@ def main():
             user = extant_fields[109823938][0]
             q = ('select user_registration from user '
                  'where user_name = "{0}"').format(user)
-            reg_date = sql.query('enwiki', q, None)[0][0].decode('utf-8')
-            reg_date = arrow.get(reg_date, 'YYYYMMDDHHmmss')
-            reg_date = reg_date.format('YYYY-MM-DD HH:mm:ss')
+            reg_date = sql.query('enwiki', q, None)[0][0]
+            
+            if reg_date == None:
+                reg_date = '1970-01-01 00:00:00'
+            else:
+                reg_date = reg_date.decode('utf-8')
+                reg_date = arrow.get(reg_date, 'YYYYMMDDHHmmss')
+                reg_date = reg_date.format('YYYY-MM-DD HH:mm:ss')
             
             attributes = {'fields': [{'field_id': 109850343,
                                      'values': [{'start_utc': reg_date}]}]}
