@@ -17,9 +17,9 @@ def main():
                          for field in item['fields']}
         
         if 109850343 not in extant_fields:  # account creation field not set
-            username = extant_fields[109823938][0]
+            user = extant_fields[109823938][0]
             q = ('select user_registration from user '
-                 'where user_name = "{0}"').format(username)
+                 'where user_name = "{0}"').format(user)
             reg_date = sql.query('enwiki', q, None)[0][0].decode('utf-8')
             reg_date = arrow.get(reg_date, 'YYYYMMDDHHmmss')
             reg_date = reg_date.format('YYYY-MM-DD HH:mm:ss')
