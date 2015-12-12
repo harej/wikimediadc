@@ -18,13 +18,14 @@ from globalmetrics import GlobalMetrics
 # Number of Edits Made: 109866023
 # Number of Bytes Changed: 109850235
 # Number of Media Files Uploaded: 109850236
+# Report Generated? 110841158
 
 
 def main():
     # Get all the items
     global_metric_fields = [109850233, 109850237, 109850234, 109866023, 109850235, 109850236]
     c = api.OAuthClient(client_id,client_secret,username,password)
-    checkins = c.Application.get_items(14347171, limit=500)['items']
+    checkins = c.transport.POST('item', 'app', 14347171, 'filter', filters={110841158: [None]})
 
     send_to_globalmetrics = {}
     
@@ -33,15 +34,6 @@ def main():
         # Create dictionary to simplify batshit Podio output
         extant_fields = {field['field_id']: list(field['values'][0].values()) \
                          for field in item['fields']}
-        
-        # Skip item if all relevant fields already filled in
-        if 109850233 in extant_fields \
-        and 109850237 in extant_fields \
-        and 109850234 in extant_fields \
-        and 109866023 in extant_fields \
-        and 109850235 in extant_fields \
-        and 109850236 in extant_fields:
-            continue
 
         # Can we analyze this entry?
         condition1 = (extant_fields[109821228][0]['id'] == 1)  # Metrics consent check
@@ -101,6 +93,9 @@ def main():
         for user, checkin in assoc_checkins.items():
             attributes = {
                             "fields": [
+                                        {"field_id": 110841158,  # Report Generated?
+                                         "values": [{"id": 1}]
+                                        },
                                         {"field_id": 109850234,  # Number of Articles Edited
                                          "values": [{"value": len(edited_articles_list[user])}]
                                         },
