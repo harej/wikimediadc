@@ -33,6 +33,15 @@ def main():
         # Create dictionary to simplify batshit Podio output
         extant_fields = {field['field_id']: list(field['values'][0].values()) \
                          for field in item['fields']}
+        
+        # Skip item if all relevant fields already filled in
+        if 109850233 in extant_fields \
+        and 109850237 in extant_fields \
+        and 109850234 in extant_fields \
+        and 109866023 in extant_fields \
+        and 109850235 in extant_fields \
+        and 109850236 in extant_fields:
+            continue
 
         # Can we analyze this entry?
         condition1 = (extant_fields[109821228][0]['id'] == 1)  # Metrics consent check
@@ -53,22 +62,22 @@ def main():
                 or len(extant_fields[global_metric_field]) == 0:
                     # Retrieving username and event date ranges from associated items
                     if user == None:  # To avoid redundant queries
-                        user = c.transport.GET('item', user_item, \
+                        user = c.transport.GET('item', user_item,
                                    'value', 109823938)[0]['value']
                         user = user.replace("_", " ")  # normalizing
                         if date_range == None:
-                            daterange = c.transport.GET('item', event_item, \
+                            daterange = c.transport.GET('item', event_item,
                                         'value', 103174438)[0]
                             daterange = [daterange['start_utc'], daterange['end_utc']]
-                            daterange = [arrow.get(date, 'YYYY-MM-DD HH:mm:ss') \
+                            daterange = [arrow.get(date, 'YYYY-MM-DD HH:mm:ss')
                                          for date in daterange]
 
                     # Checking for event being indexed in the dictionary
                     # Initializes it if not
                     if event_item not in send_to_globalmetrics:
                         send_to_globalmetrics[event_item] = \
-                        {'start_date': daterange[0], 'end_date': daterange[1], \
-                         'projects': ['enwiki'], \
+                        {'start_date': daterange[0], 'end_date': daterange[1],
+                         'projects': ['enwiki'],
                          'cohort': []}
 
                     # Adding username to cohort list
