@@ -94,7 +94,7 @@ def main():
             attributes = {
                             "fields": [
                                         {"field_id": 110841158,  # Report Generated?
-                                         "values": [{"id": 1}]
+                                         "values": [{"id": [1]}]
                                         },
                                         {"field_id": 109850234,  # Number of Articles Edited
                                          "values": [{"value": len(edited_articles_list[user])}]
