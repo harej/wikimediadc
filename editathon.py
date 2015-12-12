@@ -25,7 +25,7 @@ def main():
     # Get all the items
     global_metric_fields = [109850233, 109850237, 109850234, 109866023, 109850235, 109850236]
     c = api.OAuthClient(client_id,client_secret,username,password)
-    checkins = c.transport.POST('item', 'app', 14347171, 'filter', filters={110841158: [None]})
+    checkins = c.transport.POST('item', 'app', 14347171, 'filter', filters={110841158: [None]})['items']
 
     send_to_globalmetrics = {}
     
