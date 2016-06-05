@@ -24,6 +24,8 @@ def main(event_checkin_app=14347171, user_manifest_app=14347585, checkin_usernam
         item_id = item['item_id']
         extant_fields = {field['field_id']: list(field['values'][0].values()) for field in item['fields']}
         username = extant_fields[checkin_username_field][0]
+        username = username[0].upper() + username[1:]
+        username = username.replace('_', ' ')
 
         if username in user_profiles:
             attributes = {'fields': [{'field_id': associated_user_profile, 'values': [{'value': user_profiles[username]}]}]}
