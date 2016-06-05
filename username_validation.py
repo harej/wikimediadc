@@ -31,7 +31,14 @@ def main(event_checkin_app=14347171, user_manifest_app=14347585, checkin_usernam
 
         if wiki_username in user_profiles:
             print("Match identified for " + wiki_username)
-            attributes = {'fields': [{'field_id': associated_user_profile, 'values': user_profiles[wiki_username]}]}
+            print(str(user_profiles[wiki_username]))
+            attributes = {'fields':
+                                    [
+                                        {'field_id': associated_user_profile,
+                                         'values': user_profiles[wiki_username]
+                                        }
+                                    ]
+                         }
             print(c.Item.update(item, attributes))
 
 
