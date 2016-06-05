@@ -19,6 +19,8 @@ def main(event_checkin_app=14347171, user_manifest_app=14347585, checkin_usernam
         username = extant_fields[manifest_username_field][0]
         user_profiles[username] = item_id
 
+    print("Loaded " + str(len(user_profiles)) + " user profiles")
+
     # Now going through and checking for matches against `user_profiles`
     for item in checkins:
         item_id = item['item_id']
@@ -26,7 +28,9 @@ def main(event_checkin_app=14347171, user_manifest_app=14347585, checkin_usernam
         username = extant_fields[checkin_username_field][0]
         username = username[0].upper() + username[1:]
         username = username.replace('_', ' ')
+        print("Processing check-in: " + username)
 
         if username in user_profiles:
+            print("Match identified for " + username)
             attributes = {'fields': [{'field_id': associated_user_profile, 'values': [{'value': user_profiles[username]}]}]}
             print(c.Item.update(item, attributes))
