@@ -28,11 +28,10 @@ def main(event_checkin_app=14347171, user_manifest_app=14347585, checkin_usernam
         wiki_username = extant_fields[checkin_username_field][0]
         wiki_username = wiki_username[0].upper() + wiki_username[1:]
         wiki_username = wiki_username.replace('_', ' ')
-        print("Processing check-in: " + wiki_username)
 
         if wiki_username in user_profiles:
             print("Match identified for " + wiki_username)
-            attributes = {'fields': [{'field_id': associated_user_profile, 'values': [user_profiles[wiki_username]]}]}
+            attributes = {'fields': [{'field_id': associated_user_profile, 'values': user_profiles[wiki_username]}]}
             print(c.Item.update(item, attributes))
 
 
