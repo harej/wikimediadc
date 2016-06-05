@@ -16,8 +16,8 @@ def main(event_checkin_app=14347171, user_manifest_app=14347585, checkin_usernam
     for item in manifest:
         item_id = item['item_id']
         extant_fields = {field['field_id']: list(field['values'][0].values()) for field in item['fields']}
-        username = extant_fields[manifest_username_field][0]
-        user_profiles[username] = item_id
+        wiki_username = extant_fields[manifest_username_field][0]
+        user_profiles[wiki_username] = item_id
 
     print("Loaded " + str(len(user_profiles)) + " user profiles")
 
@@ -25,14 +25,14 @@ def main(event_checkin_app=14347171, user_manifest_app=14347585, checkin_usernam
     for item in checkins:
         item_id = item['item_id']
         extant_fields = {field['field_id']: list(field['values'][0].values()) for field in item['fields']}
-        username = extant_fields[checkin_username_field][0]
-        username = username[0].upper() + username[1:]
-        username = username.replace('_', ' ')
-        print("Processing check-in: " + username)
+        wiki_username = extant_fields[checkin_username_field][0]
+        wiki_username = wiki_username[0].upper() + wiki_username[1:]
+        wiki_username = wiki_username.replace('_', ' ')
+        print("Processing check-in: " + wiki_username)
 
-        if username in user_profiles:
-            print("Match identified for " + username)
-            attributes = {'fields': [{'field_id': associated_user_profile, 'values': [{'value': user_profiles[username]}]}]}
+        if wiki_username in user_profiles:
+            print("Match identified for " + wiki_username)
+            attributes = {'fields': [{'field_id': associated_user_profile, 'values': [{'value': user_profiles[wiki_username]}]}]}
             print(c.Item.update(item, attributes))
 
 
