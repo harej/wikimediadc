@@ -35,11 +35,11 @@ def main(event_checkin_app=14347171, user_manifest_app=14347585, checkin_usernam
             attributes = {'fields':
                                     [
                                         {'field_id': associated_user_profile,
-                                         'values': user_profiles[wiki_username]
+                                         'values': [{'value': user_profiles[wiki_username]}]
                                         }
                                     ]
                          }
-            print(c.Item.update(item, attributes))
+            c.Item.update(item, attributes)
 
 
 if __name__ == "__main__":
