@@ -4,28 +4,14 @@ from client_settings import *
 from globalmetrics import GlobalMetrics
 
 
-# App IDs:
-# Event Check-Ins: 14347171
-
-# Field IDs:
-# Metrics Consent: 109821228
-# Associated User Profile: 109824325
-# Associated Event Profile: 109850232
-# ~
-# (list of) Articles Edited During Event: 109850233
-# (list of) Media Files Uploaded: 109850237
-# Number of Articles Edited: 109850234
-# Number of Edits Made: 109866023
-# Number of Bytes Changed: 109850235
-# Number of Media Files Uploaded: 109850236
-# Report Generated? 110841158
-
-
-def main():
+def main(app_id=14347171, list_of_articles_edited_during_event=109850233, list_of_media_files_uploaded=109850237, number_of_articles_edited=109850234,
+         number_of_edits_made=109866023, number_of_bytes_changed=109850235, number_of_media_files_uploaded=109850236, report_generated=110841158,
+         metrics_consent=109821228, associated_user_profile=109824325, associated_event_profile=109850232, username_field=109823938, event_date=103174438):
     # Get all the items
-    global_metric_fields = [109850233, 109850237, 109850234, 109866023, 109850235, 109850236]
+    global_metric_fields = [list_of_articles_edited_during_event, list_of_media_files_uploaded, number_of_articles_edited,
+                            number_of_edits_made, number_of_bytes_changed, number_of_media_files_uploaded]
     c = api.OAuthClient(client_id,client_secret,username,password)
-    checkins = c.transport.POST('item', 'app', 14347171, 'filter', filters={110841158: [None], 109821228: [1]}, limit=500)['items']
+    checkins = c.transport.POST('item', 'app', app_id, 'filter', filters={report_generated: [None], metrics_consent: [1]}, limit=500)['items']
 
     send_to_globalmetrics = {}
     
@@ -36,16 +22,16 @@ def main():
                          for field in item['fields']}
 
         # Can we analyze this entry?
-        condition1 = (extant_fields[109821228][0]['id'] == 1)  # Metrics consent check
-        condition2 = 109824325 in extant_fields \
-                     and len(extant_fields[109824325]) > 0  # Associated user
-        condition3 = 109850232 in extant_fields \
-                     and len(extant_fields[109850232]) > 0  # Assoicated event
+        condition1 = (extant_fields[metrics_consent][0]['id'] == 1)  # Metrics consent check
+        condition2 = associated_user_profile in extant_fields \
+                     and len(extant_fields[associated_user_profile]) > 0  # Associated user
+        condition3 = associated_event_profile in extant_fields \
+                     and len(extant_fields[associated_event_profile]) > 0  # Assoicated event
 
         if condition1 and condition2 and condition3:
             # Get canonical username and event date/time range
-            user_item = extant_fields[109824325][0]['item_id']
-            event_item = extant_fields[109850232][0]['item_id']
+            user_item = extant_fields[associated_user_profile][0]['item_id']
+            event_item = extant_fields[associated_event_profile][0]['item_id']
             user = None  # Initializing
             date_range = None
 
@@ -55,11 +41,11 @@ def main():
                     # Retrieving username and event date ranges from associated items
                     if user == None:  # To avoid redundant queries
                         user = c.transport.GET('item', user_item,
-                                   'value', 109823938)[0]['value']
+                                   'value', username_field)[0]['value']
                         user = user.replace("_", " ")  # normalizing
                         if date_range == None:
                             daterange = c.transport.GET('item', event_item,
-                                        'value', 103174438)[0]
+                                        'value', event_date)[0]
                             daterange = [daterange['start_utc'], daterange['end_utc']]
                             daterange = [arrow.get(date, 'YYYY-MM-DD HH:mm:ss')
                                          for date in daterange]
@@ -93,35 +79,37 @@ def main():
         for user, checkin in assoc_checkins.items():
             attributes = {
                             "fields": [
-                                        {"field_id": 110841158,  # Report Generated?
+                                        {"field_id": report_generated,  # Report Generated?
                                          "values": [{"value": 1}]
                                         },
-                                        {"field_id": 109850234,  # Number of Articles Edited
+                                        {"field_id": number_of_articles_edited,  # Number of Articles Edited
                                          "values": [{"value": len(edited_articles_list[user])}]
                                         },
-                                        {"field_id": 109866023,  # Number of Edits Made
+                                        {"field_id": number_of_edits_made,  # Number of Edits Made
                                          "values": [{"value": number_of_edits[user]}]
                                         },
-                                        {"field_id": 109850235,  # Number of Bytes Changed
+                                        {"field_id": number_of_bytes_changed,  # Number of Bytes Changed
                                          "values": [{"value": absolute_bytes[user]}]
                                         },
-                                        {"field_id": 109850236,  # Number of Media Files Uploaded
+                                        {"field_id": number_of_media_files_uploaded,  # Number of Media Files Uploaded
                                          "values": [{"value": len(uploaded_media[user])}]
                                         }
                                       ]
                          }
  
             if len(edited_articles_list[user]) > 0:
-                attributes["fields"].append({"field_id": 109850233,  # (list of) Articles Edited During Event
+                attributes["fields"].append({"field_id": list_of_articles_edited_during_event,  # (list of) Articles Edited During Event
                                              "values": [{"value": "|".join(edited_articles_list[user])}]
                                             }
                                            )
             if len(uploaded_media[user]) > 0:
-                attributes["fields"].append({"field_id": 109850237,  # (list of) Media Files Uploaded
+                attributes["fields"].append({"field_id": list_of_media_files_uploaded,  # (list of) Media Files Uploaded
                                              "values": [{"value": "|".join(uploaded_media[user])}]
                                             }
                                            )
 
             print(c.Item.update(checkin, attributes))
-            
-main()
+
+
+if __name__ == "__main__":            
+  main()
