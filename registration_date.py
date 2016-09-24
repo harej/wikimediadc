@@ -16,7 +16,10 @@ def main(username_field=109823938, user_manifest=14347585, account_creation_date
             user = extant_fields[username_field][0]
             q = ('select user_registration from user '
                  'where user_name = "{0}"').format(user)
-            reg_date = sql.query('enwiki', q, None)[0][0]
+            try:
+                reg_date = sql.query('enwiki', q, None)[0][0]
+            except:
+                continue
             
             if reg_date == None:
                 reg_date = '1970-01-01 00:00:00'
