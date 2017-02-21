@@ -29,11 +29,14 @@ def main(username_field=109823938, user_manifest=14347585, account_creation_date
             reg_date = reg_date.format('YYYY-MM-DD HH:mm:ss')
             
         attributes = {'fields': [{'field_id': account_creation_date_field,
-                                  'values': [{'start_utc': reg_date}]}]}
+                                  'values': [{'start_utc': reg_date}]},
+                                 {'field_id': registration_date_retrieved,
+                                  'values': [1]}
+                                ]}
 
-        id = item['item_id']
+        item_id = item['item_id']
 
-        print(c.Item.update(id, attributes))
+        print(c.Item.update(item_id, attributes))
 
 
 if __name__ == "__main__":          
