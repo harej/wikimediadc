@@ -3,7 +3,7 @@ import tool_labs_utils
 from pypodio2 import api
 from client_settings import *
 
-def main(username_field=109823938, user_manifest=14347585, account_creation_date_field=109850343, registration_date_retrieved=None):
+def main(username_field=109823938, user_manifest=14347585, account_creation_date_field=109850343, registration_date_retrieved=143880543):
     sql = tool_labs_utils.WMFReplica()  # usage: sql.query(...)
     c = api.OAuthClient(client_id,client_secret,username,password)
     #manifest = c.Application.get_items(user_manifest, limit=500)['items']
